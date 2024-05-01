@@ -71,3 +71,61 @@ resource "aws_cloudwatch_event_target" "node_drainer" {
 }
 
 
+resource "aws_iam_role" "node_drainer" {
+  name = "${var.name_prefix}-node-drainer-role"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+
+  tags = var.tags
+}
+
+resource "aws_iam_policy" "node_drainer" {
+  name = "${var.name_prefix}-node-drainer-policy"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "autoscaling:CompleteLifecycleAction",
+        "ec2:DescribeInstances",
+        "eks:DescribeCluster",
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "node_drainer_attach" {
+  role       = aws_iam_role.node_drainer.name
+  policy_arn = aws_iam_policy.node_drainer.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution_attach" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.node_drainer.name
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_vpc_access_execution_attach" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  role       = aws_iam_role.node_drainer.name
+}
