@@ -1,5 +1,5 @@
 SHELL := /usr/bin/env bash
-# All is the first target in the file so it will get picked up when you just run 'make' on its own
+
 
 .PHONY: clean
 clean:
