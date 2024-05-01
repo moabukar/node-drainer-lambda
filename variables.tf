@@ -1,7 +1,7 @@
 variable "region" {
   type        = string
-  default     = "eu-west-1"
-  description = "AWS region in which resources will get deployed. Defaults to Ireland."
+  default     = "eu-west-2"
+  description = "AWS region in which resources will get deployed. Defaults to London."
 }
 
 variable "subnets" {
