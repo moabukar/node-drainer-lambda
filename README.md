@@ -41,3 +41,4 @@ resource "aws_autoscaling_group" "asg" {
 ## TODO
 - [X] Create drainer in Python
 - [X] Create drainer in Go
+- [] Add tests in Go lambda
